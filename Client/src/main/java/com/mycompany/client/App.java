@@ -4,10 +4,6 @@ import com.mycompany.clientservices.Service;
 import com.mycompany.commons.entities.Person;
 
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args )
