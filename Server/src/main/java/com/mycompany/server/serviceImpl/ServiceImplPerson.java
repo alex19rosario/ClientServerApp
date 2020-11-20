@@ -46,7 +46,12 @@ public class ServiceImplPerson implements ServicePerson {
 
     @Override
     public Person findById(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        DtoPerson dtoPerson = dao.findById(id);
+        Person person = new Person(dtoPerson.getName(), dtoPerson.getLastName());
+        person.setId(dtoPerson.getId());
+        return person;
+        
     }
 
     @Override

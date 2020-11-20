@@ -9,6 +9,7 @@ import com.mycompany.commons.entities.Person;
 import com.mycompany.commons.entities.ServicePointer;
 import com.mycompany.server.serviceImpl.ServiceImplPerson;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -45,6 +46,22 @@ public class Server extends Thread {
                         else if(servicePointer.getMethod().equalsIgnoreCase("delete")){
                             servicePerson.delete((Person) servicePointer.getObject());
                             System.out.println("The service was consumed succesfully");
+                        }
+                        else if(servicePointer.getMethod().equalsIgnoreCase("findById")){
+                            try {
+            
+                                Socket socketForClient = new Socket(servicePointer.getIp(), 55557);
+                                ObjectOutputStream out = new ObjectOutputStream(socketForClient.getOutputStream());
+                                out.writeObject(servicePerson.findById(servicePointer.getId()));
+                                out.close();
+                                socketForClient.close();
+                                System.out.println("The service was consumed succesfully");
+                                System.out.println("The object was sent");
+
+                            }
+                            catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                         break;
                     
