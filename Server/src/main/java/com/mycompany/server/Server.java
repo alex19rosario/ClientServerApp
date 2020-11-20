@@ -6,6 +6,7 @@
 package com.mycompany.server;
 
 import com.mycompany.commons.entities.Person;
+import com.mycompany.commons.entities.Response;
 import com.mycompany.commons.entities.ServicePointer;
 import com.mycompany.server.serviceImpl.ServiceImplPerson;
 import java.io.ObjectInputStream;
@@ -26,9 +27,10 @@ public class Server extends Thread {
         ServiceImplPerson servicePerson = new ServiceImplPerson();
         
         
+        
         try {
             System.out.println("The server is running");
-            ServerSocket server = new ServerSocket(55556);
+            ServerSocket server = new ServerSocket(55555);
             while(true){
                 
                 Socket socket = server.accept();
@@ -52,7 +54,25 @@ public class Server extends Thread {
             
                                 Socket socketForClient = new Socket(servicePointer.getIp(), 55557);
                                 ObjectOutputStream out = new ObjectOutputStream(socketForClient.getOutputStream());
-                                out.writeObject(servicePerson.findById(servicePointer.getId()));
+                                Response response = new Response(servicePerson.findById(servicePointer.getId()), "object");
+                                out.writeObject(response);
+                                out.close();
+                                socketForClient.close();
+                                System.out.println("The service was consumed succesfully");
+                                System.out.println("The object was sent");
+
+                            }
+                            catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                        else if(servicePointer.getMethod().equalsIgnoreCase("findAll")){
+                            try {
+            
+                                Socket socketForClient = new Socket(servicePointer.getIp(), 55557);
+                                ObjectOutputStream out = new ObjectOutputStream(socketForClient.getOutputStream());
+                                Response response = new Response(servicePerson.findAll(), "list");
+                                out.writeObject(response);
                                 out.close();
                                 socketForClient.close();
                                 System.out.println("The service was consumed succesfully");

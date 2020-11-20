@@ -7,12 +7,14 @@ package com.mycompany.clientservices;
 
 
 import com.mycompany.commons.entities.Person;
+import com.mycompany.commons.entities.Response;
 import com.mycompany.commons.entities.ServicePointer;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,9 +22,10 @@ import java.util.logging.Logger;
  *
  * @author alex_rosario
  */
-public class Service extends Thread{
+public class Service<Ob> extends Thread{
     
-    Person person = null;
+    Object object = null;
+    List<Ob> objectList = null;
     
     public void run(){
         
@@ -30,10 +33,18 @@ public class Service extends Thread{
             System.out.println("The client is runnig");
             ServerSocket server = new ServerSocket(55557);
             while(true){
-                System.out.println("The client is runnig");
                 Socket socket = server.accept();
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                this.person = (Person) in.readObject();
+                Response response = (Response) in.readObject();
+                
+                switch(response.getType()){
+                    case "object":
+                        this.object = response.getObject();
+                        break;
+                    case "list":
+                        this.objectList = response.getObjectList();
+                        break;
+                }
                 in.close();
                 socket.close();
             }
@@ -50,7 +61,7 @@ public class Service extends Thread{
         
         try {
             
-            Socket socket = new Socket("10.0.0.6" , 55556);
+            Socket socket = new Socket("10.0.0.6" , 55555);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(servicePointer);
             out.close();
@@ -64,7 +75,7 @@ public class Service extends Thread{
         
     }
     
-    public Person getPerson(Long id, String service, String method){
+    public Object getObject(Long id, String service, String method){
         
         InetAddress inetAddress = null;
         
@@ -78,7 +89,7 @@ public class Service extends Thread{
         
         try {
             
-            Socket socket = new Socket("10.0.0.6" , 55556);
+            Socket socket = new Socket("10.0.0.6" , 55555);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(servicePointer);
             out.close();
@@ -97,7 +108,42 @@ public class Service extends Thread{
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return this.person;
+        return this.object;
+    }
+    
+    public List<Ob> getObjectList(String service, String method){
+        
+        InetAddress inetAddress = null;
+        
+        try{
+            inetAddress = InetAddress. getLocalHost();
+        }
+        catch(Exception e){
+            
+        }
+        ServicePointer servicePointer = new ServicePointer(service, method, inetAddress.getHostAddress());
+        try {
+            
+            Socket socket = new Socket("10.0.0.6" , 55555);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(servicePointer);
+            out.close();
+            socket.close();
+            System.out.println("The object was sent");
+                
+        }
+        catch (Exception ex) {
+            System.out.println("The object was not sent");
+        }
+        
+        //THIST PART IS JUST TO GIVE A LITTLE BIT OF TIME TO THE SERVER TO SEND THE OBJECT
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return this.objectList;
     }
     
 

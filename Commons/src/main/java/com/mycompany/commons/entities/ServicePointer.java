@@ -31,6 +31,12 @@ public class ServicePointer <O> implements Serializable{
         this.id = id;
         this.ip = ip;
     }
+    
+    public ServicePointer(String service, String method, String ip){
+        this.service = service;
+        this.method = method;
+        this.ip = ip;
+    }
 
     public String getService() {
         return service;

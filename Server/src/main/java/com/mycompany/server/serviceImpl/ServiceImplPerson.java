@@ -11,6 +11,7 @@ import com.mycompany.server.dao.DaoEnum;
 import com.mycompany.server.dao.DaoPerson;
 import com.mycompany.server.dto.DtoPerson;
 import com.mycompany.server.service.ServicePerson;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class ServiceImplPerson implements ServicePerson {
     
 
     private DaoPerson dao = (DaoPerson) ApplicationContext.getDao(DaoEnum.DAO_PERSON);
+    private List<Person> personList = new ArrayList<>();
     
     
     @Override
@@ -56,7 +58,14 @@ public class ServiceImplPerson implements ServicePerson {
 
     @Override
     public List<Person> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        for(DtoPerson p: dao.findAll()){
+            Person person = new Person(p.getName(), p.getLastName());
+            person.setId(p.getId());
+            this.personList.add(person);
+        }
+        return this.personList;
+        
     }
     
 }
