@@ -16,8 +16,6 @@ public class App
         person.setId(0L);
         Person person2 = new Person("Adriel","Sanchez");
         person2.setId(1L);
-        System.out.println(person2.getId());
-        
         Service.send(person, "servicePerson", "create");
         Service.send(person2, "servicePerson", "create");
         

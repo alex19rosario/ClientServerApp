@@ -37,6 +37,8 @@ public class Server extends Thread {
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                 
                 ServicePointer servicePointer = (ServicePointer) in.readObject();
+                Person person = (Person) servicePointer.getObject();
+                //System.out.println(person.getId());
                 
                 switch(servicePointer.getService()){
                     
@@ -55,6 +57,8 @@ public class Server extends Thread {
                                 Socket socketForClient = new Socket(servicePointer.getIp(), 55557);
                                 ObjectOutputStream out = new ObjectOutputStream(socketForClient.getOutputStream());
                                 Response response = new Response(servicePerson.findById(servicePointer.getId()), "object");
+                                //Person person = (Person) response.getObject();
+                                //System.out.println(person.getId());
                                 out.writeObject(response);
                                 out.close();
                                 socketForClient.close();

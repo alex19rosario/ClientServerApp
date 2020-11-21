@@ -29,6 +29,7 @@ public class ServiceImplPerson implements ServicePerson {
     public void create(Person entity) {
         
         DtoPerson dtoPerson = new DtoPerson(entity.getName(),entity.getLastName());
+        dtoPerson.setId(entity.getId());
         dao.create(dtoPerson);
         
     }
